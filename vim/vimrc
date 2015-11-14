@@ -1,0 +1,194 @@
+" Info-tutorials
+" http://habrahabr.ru/post/196550/
+" http://sontek.net/blog/detail/turning-vim-into-a-modern-python-ide
+" TODO:
+" * http://kien.github.io/ctrlp.vim/
+
+" Auxiliary
+" =========
+
+hi SpecialKey ctermfg=black ctermbg=white
+
+" Some plugins works only after bufffer split. Here is siny fix
+set laststatus=2
+
+" Init pathoget (simple plugin instalation)
+filetype off
+call pathogen#infect()
+call pathogen#helptags()
+
+"Вырубаем режим совместимости с VI:
+set nocompatible
+
+set modeline
+
+"Включаем распознавание типов файлов и типо-специфичные плагины:
+filetype on  " As we turned it off later
+" filetype plugin on
+filetype plugin indent on
+
+" Make git gutter less sluggish
+let g:gitgutter_enabled = 0
+let g:gitgutter_realtime = 0
+let g:gitgutter_eager = 0
+
+"Автоотступ
+set autoindent
+
+" GUI
+" ===
+
+" Remove panels
+if has('gui_running')     " Глобальные настройки на GUI Vim
+    " set guioptions-=m   " убираем меню
+    set guioptions-=e     " убираем вкладки GUI делаем их как в консоли
+    set guioptions-=T     " убираем тулбар
+    " set guioptions-=r   " убираем полосы прокрутки справа
+    " set guioptions-=L   " убираем полосы прокрутки слева
+    set background=light  " Цвет фона темный или светлый
+    " set guioptions-=R
+    " set guioptions-=l
+endif
+
+
+" Подсветка
+" =========
+
+let python_highlight_all = 1 "Подсвечиваем все что можно подсвечивать
+colorscheme wombat256
+
+" The PC is fast enough, do syntax highlight syncing from start
+autocmd BufEnter * :syntax sync fromstart
+
+" Няшки
+if v:version >= 703
+    set undofile                  " Включаем вечный undo
+    set undodir=~/.vim/undofiles
+    " set undodir=/tmp/undo/      " Куда записывать файлы для undo
+    set relativenumber            " Нумерование строк не относительно начала файла, а относительно текущего положения курсора
+    set cursorline                " Подсветка текущей позиции курсора по горизонтали
+    " set cursorcolumn            " Подсветка текущей позиции курсора по вертикали
+    set colorcolumn=80            " Отображает правую границу
+end
+
+" Try gruvbox
+"colorscheme gruvbox
+"set bg=dark    " Setting dark mode
+"map <F5> :call ToggleBg()<CR>
+"function! ToggleBg()
+"    if &background == 'dark'
+"        set bg=light
+"    else
+"        set bg=dark
+"    endif
+"endfunc
+
+
+" Airline
+if has("gui_running")
+  "let g:airline_theme='solarized'
+  let g:airline_theme='wombat'  " 'tomorrow'
+  let g:airline_powerline_fonts=1
+else
+  let g:airline_powerline_fonts=0
+endif
+let g:airline_mode_map = {
+  \ '__' : '-',
+  \ 'n' : 'N',
+  \ 'i' : 'I',
+  \ 'R' : 'R',
+  \ 'c' : 'C',
+  \ 'v' : 'V',
+  \ 'V' : 'V',
+  \ '' : 'V',
+  \ 's' : 'S',
+  \ 'S' : 'S',
+  \ '' : 'S',
+  \ }
+let g:airline#extensions#whitespace#checks = []
+let g:airline_section_y = airline#section#create_right(['%{printf("%s%s",&fenc,&ff!="unix"?":".&ff:"")}'])
+" mitsuhiko-> let g:airline_section_z = airline#section#create_right(['%3l:%2c'])
+let g:airline_section_z = airline#section#create_right(['%3l:%2v'])
+let g:airline#extensions#hunks#non_zero_only = 1
+" My-> let g:airline#extensions#hunks#enabled = 1
+let g:airline#extensions#ctrlp#color_template = 'replace'
+
+
+syntax on "Включить подсветку синтаксиса
+"Включаем 256 цветов в терминале, мы ведь работаем из иксов?
+"Нужно во многих терминалах, например в gnome-terminal
+set t_Co=256
+hi SpellBad cterm=underline ctermbg=0
+
+set switchbuf=usetab " Открыть буфер при поиске в соотвествующем табе
+
+
+"Внешний вид
+set nu "Включаем нумерацию строк
+set mousehide "Спрятать курсор мыши когда набираем текст
+set mouse=a "Включить поддержку мыши
+set termencoding=utf-8 "Кодировка терминала
+set novisualbell "Не мигать
+set t_vb= "Не пищать! (Опции 'не портить текст', к сожалению, нету)
+"Удобное поведение backspace
+set backspace=indent,eol,start whichwrap+=<,>,[,]
+"Вырубаем черточки на табах
+set showtabline=2
+"Колоночка, чтобы показывать плюсики для скрытия блоков кода:
+set foldcolumn=1
+if has('gui_running')
+  " set guifont=Monospace\ 9
+  set guifont=DejaVu\ Sans\ Mono\ 9
+endif
+set hlsearch    " Подвечивать то что ищется
+set incsearch   "find the next match as we type the search
+
+" Переносим на другую строчку, разрываем строки
+set wrap
+set linebreak
+
+" Вырубаем .swp и ~ (резервные) файлы
+set nobackup
+set noswapfile
+set encoding=utf-8 " Кодировка файлов по умолчанию
+set fileencodings=utf8,cp1251,koi8r " Возможные кодировки файлов, если файл не в unicode 
+
+
+" FileTypes
+"Настройки табуляции
+set tabstop=8
+set smarttab
+
+" Python
+autocmd FileType python set softtabstop=4 expandtab shiftwidth=4  tabstop=8 smartindent " 4 пробела в табе, Табы пробелами, Смещать на 4 символа при autoindent
+\ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+" 4 пробела в табе, Табы пробелами, Смещать на 4 символа при autoindent
+autocmd FileType python set omnifunc=pythoncomplete#Complete
+let python_highlight_all = 1 "Подсвечиваем все что можно подсвечивать
+let python_highlight_exceptions=0
+let python_highlight_builtins=1
+let python_slow_sync=1
+"В .py файлах включаем умные отступы после ключевых слов
+autocmd BufRead *.py set smartindent cinwords=if,elif,else,for,while,try,except,finally,def,class
+" let g:khuno_ignore="E501,W293"
+" Settings for Pythone-mode
+let g:pymode_lint_write = 0 "No pylint
+let g:pymode_folding = 0 "No auto folding
+
+
+" HTML
+autocmd FileType xml,html,htmljinja,htmldjango setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
+let html_no_rendering=1
+" autocmd FileType html set softtabstop=2 expandtab shiftwidth=2
+autocmd FileType html set omnifunc=htmlcomplete#CompleteTags
+
+" CSS
+autocmd FileType css set softtabstop=2 expandtab shiftwidth=2
+autocmd FileType css set omnifunc=csscomplete#CompleteCSS
+
+" JS
+autocmd FileType javascript set softtabstop=4 expandtab shiftwidth=4
+"Настройка omnicomletion 
+autocmd FileType javascript set omnifunc=javascriptcomplete#CompleteJS
+
+" Other
