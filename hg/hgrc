@@ -1,0 +1,19 @@
+[extensions]
+mq =
+pager =
+color =
+record =
+bookmarks =
+rebase =
+
+[pager]
+pager = less -R
+attend = annotate, cat, diff, export, glog, log, qdiff, slog
+
+[alias]
+nudge = push --rev .
+nu = nudge
+slog = log -G --template '{rev}:{node|short}:({bookmarks}) {desc|firstline}\n'
+
+
+%include ~/.hgrc.local
