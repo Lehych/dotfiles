@@ -1,0 +1,7 @@
+*.pyc
+*.pyo
+*.bak
+.DS_Store
+vim/.netrwhist
+vim/sessions
+vim/bundle/vim-lawrencium/doc/tags

@@ -7,6 +7,9 @@
 " Auxiliary
 " =========
 
+set ignorecase
+set smartcase
+
 hi SpecialKey ctermfg=black ctermbg=white
 
 " Some plugins works only after bufffer split. Here is siny fix
