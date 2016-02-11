@@ -1,4 +1,5 @@
-install: install-vim install-tmux install-git install-hg
+install-linux: install-vim install-tmux install-git install-hg
+install-mac: install-vim install-tmux install-git install-hg install-bash-mac
 
 install-vim:
 	rm -rf ~/.vim ~/.vimrc
@@ -16,3 +17,9 @@ install-hg:
 install-tmux:
 	rm -f ~/.tmux.conf
 	ln -s `pwd`/tmux.conf ~/.tmux.conf
+
+install-bash-mac:
+	mv ~/.bash_profile ~/.bash_profile~
+	ln -s `pwd`/bash/bash_profile_mac ~/.bash_profile
+	ln -s `pwd`/bash/bash/ ~/.bash
+
